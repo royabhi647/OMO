@@ -1,5 +1,14 @@
 import React, { useState, useEffect, useRef } from 'react';
 import './App.css';
+import candleLeftImg from "./assets/candle-left.png";
+import candleRightImg from "./assets/candle-right.png";
+import yodaLeftImg from "./assets/yoda-left.png";
+import yodaRightImg from "./assets/yoda-right.png";
+
+const allImgs = [
+  { image1: candleLeftImg, image2: candleRightImg },
+  // { image1: yodaLeftImg, image2: yodaRightImg }
+];
 
 const App = () => {
   const [gameState, setGameState] = useState(null);
@@ -38,7 +47,6 @@ const App = () => {
     ws.onclose = () => {
       setIsConnected(false);
       console.log('Disconnected from server');
-      // Auto-reconnect after 3 seconds
       setTimeout(connectWebSocket, 3000);
     };
 
@@ -100,15 +108,6 @@ const App = () => {
     }
   };
 
-  const setPlayerUsername = () => {
-    if (username && wsRef.current) {
-      wsRef.current.send(JSON.stringify({
-        type: 'SET_USERNAME',
-        username: username
-      }));
-    }
-  };
-
   if (!isConnected) {
     return (
       <div className="app">
@@ -130,59 +129,62 @@ const App = () => {
     );
   }
 
+  // Determine current image pair based on round
+  const currentImageIndex = (gameState.currentRound - 1) % allImgs.length;
+  const currentImages = allImgs[currentImageIndex];
+
   return (
     <div className="app">
-      <header className="game-header">
-        <h1>🎯 Choice Master</h1>
-        <div className="game-info">
-          <span>Round: {gameState.currentRound}</span>
-          <span>Players: {choiceCounts.total}</span>
-          <span className={`timer ${gameState.timeLeft <= 3 ? 'urgent' : ''}`}>
-            ⏱ {gameState.timeLeft}s
-          </span>
-        </div>
-      </header>
-
-      <div className="username-section">
-        <input
-          type="text"
-          placeholder="Enter your username"
-          value={username}
-          onChange={(e) => setUsername(e.target.value)}
-          onKeyPress={(e) => e.key === 'Enter' && setPlayerUsername()}
-        />
-        <button onClick={setPlayerUsername}>Set Username</button>
-      </div>
-
       <main className="game-area">
         <div className="game-image">
-          <div className="image-placeholder">
-            <span>🖼 Game Image #{gameState.currentRound}</span>
-            <div className="divider-line"></div>
+          <div className="image-placeholder flex justify-between w-full max-w-md mx-auto">
+            <div className="left-side flex-1 flex flex-col items-center">
+              <button
+                className={`choice-btn left w-full p-4 ${!gameState.isActive ? 'opacity-50 cursor-not-allowed' : ''}`}
+                onClick={() => makeChoice('left')}
+                disabled={!gameState.isActive || gameState.gameEnded}
+              >
+                {/* <div className="choice-label">LEFT</div> */}
+                <img
+                  src={currentImages.image1}
+                  alt="Left choice"
+                  className="w-full mb-4 h-auto"
+                />
+                {/* <div className="choice-count">{choiceCounts.left} players</div> */}
+              </button>
+            </div>
+            <div className="divider-line w-1 h-64 bg-gray-300 mx-4"></div>
+            <div className="right-side flex-1 flex flex-col items-center">
+              <button
+                className={`choice-btn right w-full p-4 ${!gameState.isActive ? 'opacity-50 cursor-not-allowed' : ''}`}
+                onClick={() => makeChoice('right')}
+                disabled={!gameState.isActive || gameState.gameEnded}
+              >
+                {/* <div className="choice-label">RIGHT</div> */}
+                <img
+                  src={currentImages.image2}
+                  alt="Right choice"
+                  className="w-full mb-4 h-auto"
+                />
+                {/* <div className="choice-count">{choiceCounts.right} players</div> */}
+              </button>
+            </div>
           </div>
+
+          <div className='absolute top-5 left-5 flex items-center justify-center bg-red-500 text-white rounded-[6px] px-4 py-2'>
+            <p className=''>Players: {choiceCounts.total}</p>
+          </div>
+
+
+          <div className='game-info absolute top-5 right-5 flex items-center justify-center'>
+            <span className={`timer ${gameState.timeLeft <= 3 ? 'urgent' : ''} text-[18px]`}>
+              {gameState.timeLeft}
+            </span>
+          </div>
+
         </div>
 
         <div className="choice-section">
-          <div className="choice-buttons">
-            <button
-              className={`choice-btn left ${playerChoice === 'left' ? 'selected' : ''} ${!gameState.isActive ? 'disabled' : ''}`}
-              onClick={() => makeChoice('left')}
-              disabled={!gameState.isActive || gameState.gameEnded}
-            >
-              <div className="choice-label">LEFT</div>
-              <div className="choice-count">{choiceCounts.left} players</div>
-            </button>
-
-            <button
-              className={`choice-btn right ${playerChoice === 'right' ? 'selected' : ''} ${!gameState.isActive ? 'disabled' : ''}`}
-              onClick={() => makeChoice('right')}
-              disabled={!gameState.isActive || gameState.gameEnded}
-            >
-              <div className="choice-label">RIGHT</div>
-              <div className="choice-count">{choiceCounts.right} players</div>
-            </button>
-          </div>
-
           {playerChoice && (
             <div className="player-choice">
               Your choice: <strong>{playerChoice.toUpperCase()}</strong>
@@ -203,29 +205,28 @@ const App = () => {
           <div className="results-section">
             <h2>Round Results</h2>
             <div className="results-grid">
-              <div className={`result-item left ${results.winingSide === 'left' ? 'winner' : ''}`}>
+              <div className={`result-item left ${results.winningSide === 'left' ? 'winner' : ''}`}>
                 <h3>LEFT</h3>
                 <div className="percentage">{results.leftPercent}%</div>
                 <div className="count">{results.leftCount} players</div>
-                {results.winingSide === 'left' && <div className="winner-badge">🏆 WINNER!</div>}
+                {results.winningSide === 'left' && <div className="winner-badge">🏆 WINNER!</div>}
               </div>
 
-              <div className={`result-item right ${results.winingSide === 'right' ? 'winner' : ''}`}>
+              <div className={`result-item right ${results.winningSide === 'right' ? 'winner' : ''}`}>
                 <h3>RIGHT</h3>
                 <div className="percentage">{results.rightPercent}%</div>
                 <div className="count">{results.rightCount} players</div>
-                {results.winingSide === 'right' && <div className="winner-badge">🏆 WINNER!</div>}
+                {results.winningSide === 'right' && <div className="winner-badge">🏆 WINNER!</div>}
               </div>
             </div>
 
-            {results.winingSide === 'tie' && (
+            {results.winningSide === 'tie' && (
               <div className="tie-message">🤝 It's a tie! Everyone wins!</div>
             )}
 
             {playerChoice && (
-              <div className={`player-result ${(results.winingSide === playerChoice) || results.winingSide === 'tie' ? 'won' : 'lost'
-                }`}>
-                {(results.winingSide === playerChoice) || results.winingSide === 'tie'
+              <div className={`player-result ${(results.winningSide === playerChoice) || results.winningSide === 'tie' ? 'won' : 'lost'}`}>
+                {(results.winningSide === playerChoice) || results.winningSide === 'tie'
                   ? '🎉 You won this round!'
                   : '😔 Better luck next time!'}
               </div>
@@ -236,17 +237,6 @@ const App = () => {
             </div>
           </div>
         )}
-
-        <div className="game-rules">
-          <h3>🕹 How to Play:</h3>
-          <ul>
-            <li>Choose LEFT or RIGHT before time runs out</li>
-            <li>You can change your choice until 3 seconds remain</li>
-            <li>The side with <strong>fewer players</strong> wins!</li>
-            <li>New round starts every 10 seconds</li>
-            <li>Think strategically - avoid the crowd!</li>
-          </ul>
-        </div>
       </main>
     </div>
   );
