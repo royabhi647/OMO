@@ -205,10 +205,6 @@ const App = () => {
 
         {results && (
           <div className="results-section">
-            {results.winningSide === 'tie' && (
-              <div className="tie-message">🤝 It's a tie! Everyone wins!</div>
-            )}
-
             {playerChoice && (
               <div className={`player-result ${(results.winningSide === playerChoice) || results.winningSide === 'tie' ? 'won' : 'lost'}`}>
                 {(results.winningSide === playerChoice) || results.winningSide === 'tie'
