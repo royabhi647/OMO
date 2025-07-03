@@ -7,7 +7,7 @@ import yodaRightImg from "./assets/yoda-right.png";
 
 const allImgs = [
   { image1: candleLeftImg, image2: candleRightImg },
-  // { image1: yodaLeftImg, image2: yodaRightImg }
+  { image1: yodaLeftImg, image2: yodaRightImg }
 ];
 
 const App = () => {
@@ -16,7 +16,6 @@ const App = () => {
   const [playerChoice, setPlayerChoice] = useState(null);
   const [results, setResults] = useState(null);
   const [isConnected, setIsConnected] = useState(false);
-  const [username, setUsername] = useState('');
   const [choiceCounts, setChoiceCounts] = useState({ left: 0, right: 0, total: 0 });
 
   const wsRef = useRef(null);
@@ -129,16 +128,15 @@ const App = () => {
     );
   }
 
-  // Determine current image pair based on round
   const currentImageIndex = (gameState.currentRound - 1) % allImgs.length;
   const currentImages = allImgs[currentImageIndex];
 
   return (
     <div className="app">
       <main className="game-area">
-        <div className="game-image">
+        <div className="game-image relative z-0">
           <div className="image-placeholder flex justify-between w-full max-w-md mx-auto">
-            <div className="left-side flex-1 flex flex-col items-center">
+            <div className="left-side flex-1 flex flex-col items-center relative">
               <button
                 className={`choice-btn left w-full p-4 ${!gameState.isActive ? 'opacity-50 cursor-not-allowed' : ''}`}
                 onClick={() => makeChoice('left')}
@@ -152,9 +150,14 @@ const App = () => {
                 />
                 {/* <div className="choice-count">{choiceCounts.left} players</div> */}
               </button>
+              {results?.winningSide === 'left' && (
+                <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 text-green-600 font-bold bg-white px-4 py-2 rounded shadow">
+                  🏆 WINNER!
+                </div>
+              )}
             </div>
             <div className="divider-line w-1 h-64 bg-gray-300 mx-4"></div>
-            <div className="right-side flex-1 flex flex-col items-center">
+            <div className="right-side flex-1 flex flex-col items-center relative">
               <button
                 className={`choice-btn right w-full p-4 ${!gameState.isActive ? 'opacity-50 cursor-not-allowed' : ''}`}
                 onClick={() => makeChoice('right')}
@@ -168,6 +171,11 @@ const App = () => {
                 />
                 {/* <div className="choice-count">{choiceCounts.right} players</div> */}
               </button>
+              {results?.winningSide === 'right' && (
+                <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 text-green-600 font-bold bg-white px-4 py-2 rounded shadow">
+                  🏆 WINNER!
+                </div>
+              )}
             </div>
           </div>
 
@@ -182,44 +190,21 @@ const App = () => {
             </span>
           </div>
 
-        </div>
-
-        <div className="choice-section">
-          {playerChoice && (
-            <div className="player-choice">
-              Your choice: <strong>{playerChoice.toUpperCase()}</strong>
-              {gameState.isActive && (
-                <small>You can change your choice until time runs out!</small>
-              )}
+          {gameState.timeLeft <= 3 && !gameState.gameEnded && (
+            <div className="locked-message absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/ z-20">
+              🔒 Choices locked! Calculating results...
             </div>
-          )}
-        </div>
 
-        {gameState.timeLeft <= 3 && !gameState.gameEnded && (
-          <div className="locked-message">
-            🔒 Choices locked! Calculating results...
-          </div>
-        )}
+          )}
+
+          {results?.winningSide === 'tie' && (
+            <div className="tie-message absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/ z-20">🤝 It's a tie! Everyone wins!</div>
+          )}
+
+        </div>
 
         {results && (
           <div className="results-section">
-            <h2>Round Results</h2>
-            <div className="results-grid">
-              <div className={`result-item left ${results.winningSide === 'left' ? 'winner' : ''}`}>
-                <h3>LEFT</h3>
-                <div className="percentage">{results.leftPercent}%</div>
-                <div className="count">{results.leftCount} players</div>
-                {results.winningSide === 'left' && <div className="winner-badge">🏆 WINNER!</div>}
-              </div>
-
-              <div className={`result-item right ${results.winningSide === 'right' ? 'winner' : ''}`}>
-                <h3>RIGHT</h3>
-                <div className="percentage">{results.rightPercent}%</div>
-                <div className="count">{results.rightCount} players</div>
-                {results.winningSide === 'right' && <div className="winner-badge">🏆 WINNER!</div>}
-              </div>
-            </div>
-
             {results.winningSide === 'tie' && (
               <div className="tie-message">🤝 It's a tie! Everyone wins!</div>
             )}

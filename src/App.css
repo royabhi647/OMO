@@ -65,6 +65,8 @@
   justify-content: center;
   max-width: 1200px;
   width: 100%;
+  border: 2px solid grey;
+  background-color: gray;
 }
 
 .divider-line {
@@ -73,7 +75,7 @@
   left: 50%;
   width: 2px;
   height: 100%;
-  background: grey;
+  background: white;
   z-index: 1;
 }
 
@@ -86,11 +88,6 @@
 
 .choice-btn {
   cursor: pointer;
-}
-
-.choice-btn:hover:not(.disabled) {
-  transform: translateY(-5px);
-  box-shadow: 0 15px 40px rgba(0, 0, 0, 0.2);
 }
 
 
@@ -229,10 +226,15 @@
 }
 
 .tie-message {
-  font-size: 1.5rem;
+  text-align: center;
+  padding: 1.5rem;
+  background: #fef3c7;
+  border: 2px solid #f59e0b;
+  border-radius: 10px;
   font-weight: 600;
-  color: #059669;
-  margin: 1rem 0;
+  font-size: 1.2rem;
+  color: #92400e;
+  animation: flash 0.5s infinite;
 }
 
 .player-result {
