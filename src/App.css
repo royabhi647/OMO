@@ -41,12 +41,10 @@
 .game-area {
   background-color: #212121;
   display: flex;
-  justify-content: center;
   align-items: center;
-  padding: 2rem;
   display: flex;
   flex-direction: column;
-  gap: 2rem;
+  height: 100vh;
 }
 
 /* Game Image */
@@ -58,7 +56,7 @@
 }
 
 .image-placeholder {
-  height: 90vh;
+  height: 80vh;
   position: relative;
   display: flex;
   align-items: center;
