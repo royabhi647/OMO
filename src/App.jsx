@@ -135,8 +135,8 @@ const App = () => {
     <div className="app">
       <main className="game-area">
         <div className="game-image relative z-0">
-          <div className="image-placeholder flex justify-between w-full max-w-md mx-auto">
-            <div className="left-side flex-1 flex flex-col items-center relative">
+          <div className="image-placeholder">
+            <div className="flex-1 flex flex-col items-center justify-center relative w-[50vw] h-[80vh]">
               <button
                 className={`choice-btn left w-full p-4 ${!gameState.isActive ? 'opacity-50 cursor-not-allowed' : ''}`}
                 onClick={() => makeChoice('left')}
@@ -146,7 +146,7 @@ const App = () => {
                 <img
                   src={currentImages.image1}
                   alt="Left choice"
-                  className="w-full mb-4 h-auto"
+                  className="w-full mb-4 h-full"
                 />
                 {/* <div className="choice-count">{choiceCounts.left} players</div> */}
               </button>
