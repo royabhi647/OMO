@@ -2,12 +2,15 @@ import React, { useState, useEffect, useRef } from 'react';
 import './App.css';
 import candleLeftImg from "./assets/candle-left.png";
 import candleRightImg from "./assets/candle-right.png";
-import yodaLeftImg from "./assets/yoda-left.png";
-import yodaRightImg from "./assets/yoda-right.png";
+import adamImg from "./assets/adam.png";
+import evolutionImg from "./assets/evolution.png";
+import fastFoodPressImg from "./assets/fast-food-press.png";
+import fruitPressImg from "./assets/fruit-press.png";
 
 const allImgs = [
   { image1: candleLeftImg, image2: candleRightImg },
-  { image1: yodaLeftImg, image2: yodaRightImg }
+  { image1: adamImg, image2: evolutionImg },
+  { image1: fastFoodPressImg, image2: fruitPressImg },
 ];
 
 const App = () => {
@@ -136,7 +139,7 @@ const App = () => {
       <main className="game-area">
         <div className="game-image relative z-0">
           <div className="image-placeholder">
-            <div className="flex-1 flex flex-col items-center justify-center relative w-[50vw] h-[80vh]">
+            <div className="flex-1 flex flex-col items-center justify-center relative w-[50vw] h-[80vh] bg-[#4b5563]">
               <button
                 className={`choice-btn left w-full p-4 ${!gameState.isActive ? 'opacity-50 cursor-not-allowed' : ''}`}
                 onClick={() => makeChoice('left')}
@@ -157,7 +160,7 @@ const App = () => {
               )}
             </div>
             <div className="divider-line w-1 h-64 bg-gray-300 mx-4"></div>
-            <div className="right-side flex-1 flex flex-col items-center relative">
+            <div className="flex-1 flex flex-col items-center justify-center relative w-[50vw] h-[80vh] bg-[#4b5563]">
               <button
                 className={`choice-btn right w-full p-4 ${!gameState.isActive ? 'opacity-50 cursor-not-allowed' : ''}`}
                 onClick={() => makeChoice('right')}

@@ -39,6 +39,7 @@
 
 /* Main Game Area */
 .game-area {
+  background-color: #212121;
   display: flex;
   justify-content: center;
   align-items: center;
@@ -64,8 +65,8 @@
   justify-content: center;
   max-width: 500px;
   width: 100%;
-  border: 2px solid grey;
-  background-color: gray;
+  border: 1px solid gray;
+  background-color: #4b5563;
 }
 
 .divider-line {
@@ -74,7 +75,7 @@
   left: 50%;
   width: 2px;
   height: 100%;
-  background: white;
+  background: gray;
   z-index: 1;
 }
 
